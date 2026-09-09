@@ -1,0 +1,8 @@
+{
+    "XGBoost": 0.65,
+    "Advanced XGBoost": 0.11,
+    "LightGBM": 0.11,
+    "ANN": 0.73,
+    "TabPFN": 0.09,
+    "Random Forest": 0.17
+}

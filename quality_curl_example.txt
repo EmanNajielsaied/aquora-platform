@@ -1,0 +1,3 @@
+curl -X POST http://localhost:8000/predict \
+  -H "Content-Type: application/json" \
+  -d '{"pH":7.0,"Turbidity_NTU":2.0,"TDS_mg_L":300.0,"Temperature_C":22.0}'

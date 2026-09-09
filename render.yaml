@@ -1,0 +1,29 @@
+services:
+  # 1. FastAPI Backend API Service
+  - type: web
+    name: aquora-backend-api
+    env: python
+    region: frankfurt
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn backend.app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+
+  # 2. Streamlit Master Frontend Dashboard
+  - type: web
+    name: aquora-streamlit-ui
+    env: python
+    region: frankfurt
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: streamlit run aquora_ui/app.py --server.port $PORT --server.address 0.0.0.0 --theme.base dark
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: AQUORA_API_URL
+        fromService:
+          type: web
+          name: aquora-backend-api
+          property: host

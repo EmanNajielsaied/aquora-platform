@@ -1,0 +1,11 @@
+{
+  "request": {
+    "pH": 7.0,
+    "Turbidity_NTU": 2.0,
+    "TDS_mg_L": 300.0,
+    "Temperature_C": 22.0
+  },
+  "response": {
+    "Water_Quality_Index": 0.0
+  }
+}

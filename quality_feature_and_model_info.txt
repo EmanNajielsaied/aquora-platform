@@ -1,0 +1,79 @@
+Aquora Water-Quality Model Handoff
+=================================
+
+Selected model
+--------------
+ANN / MLPRegressor inside a scikit-learn Pipeline.
+
+Reason for selection
+--------------------
+Selected by 5-fold Group Cross-Validation using ONLY the four sensors currently
+available in the Aquora water-quality subsystem.
+
+5-fold Group CV:
+- R2   = 0.581764
+- RMSE = 3.100518
+- MAE  = 2.450033
+
+Final untouched test:
+- R2   = 0.577137
+- RMSE = 3.087164
+- MAE  = 2.434852
+
+Input feature order
+-------------------
+1. pH
+2. Turbidity_NTU
+3. TDS_mg_L
+4. Temperature_C
+
+Preprocessing
+-------------
+The trained artifact is a complete sklearn Pipeline:
+1. SimpleImputer(strategy='median')
+2. StandardScaler()
+3. MLPRegressor(...)
+
+Therefore NO separate scaler/preprocessor file is required.
+
+ANN architecture / parameters
+------------------------------
+hidden_layer_sizes = (64, 32)
+activation = 'relu'
+solver = 'adam'
+alpha = 0.0005
+learning_rate_init = 0.001
+max_iter = 150
+early_stopping = True
+validation_fraction = 0.15
+batch_size = 256
+random_state = 42
+
+Output
+------
+Numeric estimate of Water_Quality_Index.
+
+Decision / threshold logic
+--------------------------
+NONE in the current project model.
+
+Do not convert the output to Safe/Unsafe unless a scientifically justified,
+independent threshold/label is defined later.
+
+Current hardware constraint
+---------------------------
+The model uses only:
+- pH
+- Turbidity
+- TDS
+- Temperature
+
+The broader dataset experiment showed that extra water-quality parameters can
+improve WQI estimation, but those parameters are not currently measured by the
+available hardware. They are therefore future sensor-expansion candidates,
+not required inputs to this current model.
+
+Scientific scope
+----------------
+The model estimates the existing dataset's Water_Quality_Index. It is not
+independent proof of contamination detection.

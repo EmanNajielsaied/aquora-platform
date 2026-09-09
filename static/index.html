@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PowerGuard | AI Predictive Maintenance Dashboard</title>
+    <meta name="description" content="Production-ready predictive maintenance web application for pipe failure assessment powered by XGBoost machine learning.">
+    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="/static/css/styles.css">
+</head>
+<body class="dark-theme">
+    <div class="app-wrapper">
+        <!-- Top Navigation Header -->
+        <header class="top-header">
+            <div class="header-container">
+                <div class="brand-logo">
+                    <div class="logo-icon">
+                        <i class="fa-solid fa-shield-halved"></i>
+                    </div>
+                    <div class="brand-text">
+                        <span class="brand-name">Power<span class="highlight">Guard</span></span>
+                        <span class="brand-tagline">AI Predictive Maintenance</span>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <div class="status-pill">
+                        <span class="pulse-dot green"></span>
+                        <span class="status-label">Pipeline Active</span>
+                        <span class="divider">•</span>
+                        <span class="threshold-tag">Threshold: <strong>0.65</strong></span>
+                    </div>
+                    <button id="btn-architecture-modal" class="btn-secondary">
+                        <i class="fa-solid fa-network-wired"></i> Architecture
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Workspace Container -->
+        <main class="main-container">
+            <!-- Hero Presets Bar -->
+            <section class="presets-banner">
+                <div class="presets-header">
+                    <i class="fa-solid fa-bolt"></i>
+                    <span>Quick Benchmark Presets:</span>
+                </div>
+                <div class="presets-buttons">
+                    <button class="preset-btn btn-preset-normal" data-preset="normal">
+                        <i class="fa-solid fa-circle-check"></i> Normal Asset (Low Risk)
+                    </button>
+                    <button class="preset-btn btn-preset-high" data-preset="high_risk">
+                        <i class="fa-solid fa-triangle-exclamation"></i> High-Risk Asset (Failure)
+                    </button>
+                    <button class="preset-btn btn-preset-anomaly" data-preset="vibration_anomaly">
+                        <i class="fa-solid fa-wave-square"></i> Sensor Anomaly Case
+                    </button>
+                    <button id="btn-reset-form" class="preset-btn btn-preset-reset">
+                        <i class="fa-solid fa-rotate-left"></i> Reset Form
+                    </button>
+                </div>
+            </section>
+
+            <!-- Grid Layout: Input Forms (Left/Center) + Live Prediction Dashboard (Right) -->
+            <div class="dashboard-grid">
+                
+                <!-- Left Panel: Structured Input Form -->
+                <section class="input-panel">
+                    <div class="panel-header">
+                        <div class="panel-title">
+                            <i class="fa-solid fa-sliders"></i>
+                            <h2>Asset Parameters (54 Features)</h2>
+                        </div>
+                        <span class="features-badge">54 Raw Inputs → 71 Pipeline Features</span>
+                    </div>
+
+                    <!-- Category Tab Navigation -->
+                    <nav class="category-tabs" id="category-tabs">
+                        <!-- Category buttons generated dynamically by JS -->
+                    </nav>
+
+                    <!-- Feature Sections Container -->
+                    <form id="prediction-form" class="feature-form">
+                        <div id="sections-container" class="sections-container">
+                            <!-- Section cards rendered dynamically by JS -->
+                        </div>
+
+                        <!-- Form Actions Bar -->
+                        <div class="form-actions-bar">
+                            <button type="submit" id="btn-submit-prediction" class="btn-primary">
+                                <span class="btn-text"><i class="fa-solid fa-chart-line"></i> Run XGBoost Prediction</span>
+                                <span class="spinner" style="display: none;"><i class="fa-solid fa-spinner fa-spin"></i> Analyzing...</span>
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Right Panel: Prediction Results Dashboard -->
+                <section class="results-panel">
+                    <div class="results-card glass-panel" id="results-card">
+                        <div class="card-header">
+                            <h3><i class="fa-solid fa-microchip"></i> Prediction Results</h3>
+                            <span class="model-badge">XGBoost Classifier</span>
+                        </div>
+
+                        <!-- Gauge Chart Container -->
+                        <div class="gauge-section">
+                            <div class="gauge-container">
+                                <svg class="gauge-svg" viewBox="0 0 200 120">
+                                    <!-- Background Arc -->
+                                    <path class="gauge-bg" d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke-width="16" />
+                                    <!-- Low Risk Segment (0 - 30%) -->
+                                    <path class="gauge-segment low" d="M 20 100 A 80 80 0 0 1 52.8 38" fill="none" stroke-width="16" />
+                                    <!-- Medium Risk Segment (30% - 65%) -->
+                                    <path class="gauge-segment medium" d="M 52.8 38 A 80 80 0 0 1 127.2 27.6" fill="none" stroke-width="16" />
+                                    <!-- High Risk Segment (65% - 100%) -->
+                                    <path class="gauge-segment high" d="M 127.2 27.6 A 80 80 0 0 1 180 100" fill="none" stroke-width="16" />
+                                    <!-- Animated Value Arc -->
+                                    <path id="gauge-fill" class="gauge-fill" d="M 20 100 A 80 80 0 0 1 20 100" fill="none" stroke-width="18" />
+                                    <!-- Threshold Line Marker (at 65%) -->
+                                    <line id="threshold-line" x1="127.2" y1="27.6" x2="134" y2="18" stroke="#f59e0b" stroke-width="3" />
+                                    <!-- Needle -->
+                                    <g id="gauge-needle" transform="rotate(-90, 100, 100)">
+                                        <polygon points="96,100 104,100 100,25" fill="#f8fafc" />
+                                        <circle cx="100" cy="100" r="7" fill="#0f172a" stroke="#f8fafc" stroke-width="3" />
+                                    </g>
+                                </svg>
+                                <div class="gauge-center-text">
+                                    <span id="result-probability" class="probability-val">--%</span>
+                                    <span class="probability-label">Failure Prob</span>
+                                </div>
+                            </div>
+
+                            <div class="threshold-callout">
+                                <i class="fa-solid fa-bullseye"></i> Decision Threshold: <strong>0.65</strong> (65.0%)
+                            </div>
+                        </div>
+
+                        <!-- Status Result Banner -->
+                        <div id="result-banner" class="result-banner pending">
+                            <div class="banner-icon">
+                                <i id="status-icon" class="fa-solid fa-circle-question"></i>
+                            </div>
+                            <div class="banner-details">
+                                <span class="status-label-small">Assessment Status</span>
+                                <h4 id="status-title" class="status-title">Ready for Analysis</h4>
+                                <span id="risk-badge" class="risk-badge badge-pending">Waiting for Input</span>
+                            </div>
+                        </div>
+
+                        <!-- Key Indicators Grid -->
+                        <div class="indicators-grid">
+                            <div class="indicator-box">
+                                <span class="ind-title"><i class="fa-solid fa-hourglass-half"></i> Pipe Age</span>
+                                <span id="ind-age" class="ind-value">-- yrs</span>
+                            </div>
+                            <div class="indicator-box">
+                                <span class="ind-title"><i class="fa-solid fa-gauge-high"></i> Press. Dev</span>
+                                <span id="ind-pressure-dev" class="ind-value">--</span>
+                            </div>
+                            <div class="indicator-box">
+                                <span class="ind-title"><i class="fa-solid fa-wave-square"></i> Vib RMS</span>
+                                <span id="ind-vib-rms" class="ind-value">--</span>
+                            </div>
+                            <div class="indicator-box">
+                                <span class="ind-title"><i class="fa-solid fa-triangle-exclamation"></i> Risk Score</span>
+                                <span id="ind-risk-score" class="ind-value">--</span>
+                            </div>
+                        </div>
+
+                        <!-- Technical Pipeline Callout -->
+                        <div class="pipeline-card">
+                            <div class="pipe-step">
+                                <span class="step-num">1</span>
+                                <span class="step-desc">54 Raw Inputs</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right step-arrow"></i>
+                            <div class="pipe-step">
+                                <span class="step-num">2</span>
+                                <span class="step-desc">71 Processed</span>
+                            </div>
+                            <i class="fa-solid fa-chevron-right step-arrow"></i>
+                            <div class="pipe-step">
+                                <span class="step-num">3</span>
+                                <span class="step-desc">XGBoost Prob</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>PowerGuard Machine Learning Platform • XGBoost Predictive Maintenance Pipeline • Preprocessor Transformation (54 → 71 Features) • Threshold = 0.65</p>
+        </footer>
+    </div>
+
+    <!-- Architecture Modal -->
+    <div id="architecture-modal" class="modal-backdrop" style="display: none;">
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i class="fa-solid fa-diagram-project"></i> Pipeline Architecture</h3>
+                <button id="btn-close-modal" class="btn-icon"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="modal-body">
+                <div class="arch-diagram">
+                    <div class="arch-box">
+                        <i class="fa-solid fa-keyboard"></i>
+                        <h4>54 Input Features</h4>
+                        <p>49 Numeric + 5 Categorical</p>
+                    </div>
+                    <div class="arch-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="arch-box highlight">
+                        <i class="fa-solid fa-gears"></i>
+                        <h4>preprocessor.pkl</h4>
+                        <p>ColumnTransformer → 71 Features</p>
+                    </div>
+                    <div class="arch-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="arch-box model">
+                        <i class="fa-solid fa-brain"></i>
+                        <h4>xgboost_model.pkl</h4>
+                        <p>predict_proba()</p>
+                    </div>
+                    <div class="arch-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                    <div class="arch-box decision">
+                        <i class="fa-solid fa-scale-balanced"></i>
+                        <h4>Threshold 0.65</h4>
+                        <p>Normal vs Failure Expected</p>
+                    </div>
+                </div>
+
+                <div class="arch-specs">
+                    <h4>Categorical Feature Encodings:</h4>
+                    <ul>
+                        <li><strong>Asset_Type:</strong> MAIN, SERVICE</li>
+                        <li><strong>Pipe_Material:</strong> CI, DI, PE, PVC, Unknown</li>
+                        <li><strong>Criticality:</strong> Critical, High, Low, Medium</li>
+                        <li><strong>Day_of_Week:</strong> Monday through Sunday</li>
+                        <li><strong>Season:</strong> Autumn, Spring, Summer, Winter</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
