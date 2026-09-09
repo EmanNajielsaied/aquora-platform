@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(me
 logger = logging.getLogger("aquora.supervisor")
 
 def main():
-    public_port = int(os.environ.get("PORT", 8501))
+    public_port = int(os.environ.get("PORT", os.environ.get("APP_PORT", 7860)))
     internal_api_port = int(os.environ.get("API_PORT", 8000))
     host = "0.0.0.0"
 

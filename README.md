@@ -1,3 +1,13 @@
+---
+title: Aquora Smart Water Infrastructure
+emoji: 💧
+colorFrom: blue
+colorTo: cyan
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # 💧 Aquora Smart Water Infrastructure Platform
 
 A production-grade, unified AI monitoring, leak detection, and predictive decision-support platform designed for smart municipal water distribution networks.
