@@ -2,11 +2,12 @@ services:
   # 1. FastAPI Backend API Service
   - type: web
     name: aquora-backend-api
-    env: python
+    runtime: python
     region: frankfurt
     plan: free
     buildCommand: pip install -r requirements.txt
     startCommand: uvicorn backend.app:app --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
@@ -14,11 +15,11 @@ services:
   # 2. Streamlit Master Frontend Dashboard
   - type: web
     name: aquora-streamlit-ui
-    env: python
+    runtime: python
     region: frankfurt
     plan: free
     buildCommand: pip install -r requirements.txt
-    startCommand: streamlit run aquora_ui/app.py --server.port $PORT --server.address 0.0.0.0 --theme.base dark
+    startCommand: streamlit run aquora_ui/app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true --theme.base dark
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
