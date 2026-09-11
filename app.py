@@ -35,7 +35,7 @@ def ensure_backend_running():
             "--host", "127.0.0.1",
             "--port", "8000"
         ]
-        subprocess.Popen(backend_cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.Popen(backend_cmd)
         
         # Wait up to 6 seconds for backend readiness
         for _ in range(30):
