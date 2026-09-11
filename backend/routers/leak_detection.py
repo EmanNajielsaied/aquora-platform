@@ -10,6 +10,7 @@ import json
 import logging
 import warnings
 
+import backend.sklearn_compat
 import joblib
 import pandas as pd
 from fastapi import APIRouter, HTTPException
