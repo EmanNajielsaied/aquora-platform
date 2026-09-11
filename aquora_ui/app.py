@@ -49,7 +49,8 @@ with st.sidebar:
 
     is_online = backend_status.get("status") in ["online", "ready"]
     if is_online:
-        st.success("✓ FastAPI Gateway Connected (Port 8000)")
+        mode_str = " (Port 8000)" if backend_status.get("mode") == "http" else " (Direct Engine)"
+        st.success(f"✓ FastAPI Gateway Connected{mode_str}")
         subsystems = backend_status.get("subsystems", {})
         for key, sub in subsystems.items():
             status_symbol = "🟢" if sub.get("status") == "ready" else "🔴"

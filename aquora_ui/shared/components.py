@@ -11,7 +11,10 @@ def render_header(backend_status: Dict[str, Any]):
 
     pill_class = "status-pill-box" if is_online else "status-pill-box offline"
     pulse_class = "pulse-dot" if is_online else "pulse-dot offline"
-    status_text = "API Gateway Online (Port 8000)" if is_online else "API Gateway Offline"
+    if is_online:
+        status_text = "API Gateway Online (Port 8000)" if backend_status.get("mode") == "http" else "API Gateway Online"
+    else:
+        status_text = "API Gateway Offline"
 
     st.markdown(f"""
     <div class="aquora-brand-header">

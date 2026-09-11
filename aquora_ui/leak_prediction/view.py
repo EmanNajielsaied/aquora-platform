@@ -169,6 +169,7 @@ def render_leak_prediction_tab():
                 res = api_client.predict_leak(features)
                 prediction_result = res
                 st.session_state.last_pred_result = res
+                st.session_state.last_leak_result = res
             except Exception as e:
                 st.error(f"Inference request failed: {e}")
                 prediction_result = st.session_state.get("last_pred_result")
